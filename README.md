@@ -1,3 +1,3 @@
 # Android Project
 
-- This is a android project.
+- This is an android project.
