@@ -9,7 +9,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
-import com.android_project.R
+import com.everyclocked.R
 
 private val Montserrat = FontFamily(
     Font(R.font.montserrat_regular),
