@@ -64,93 +64,97 @@ import kotlinx.coroutines.launch
 fun MainPage(
 
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("EveryClocked")
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_clock_logo),
-                            contentDescription = null
-                        )
-                    }
-                },
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
-                Icon(Icons.Filled.Add, contentDescription = null)
-            }
-        }
-    )
-    {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(45f)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(top = 70.dp)
-            ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawCircle(
-                        color = Color.Red,
-                        center = Offset(size.width / 2, size.height / 2),
-                        radius = size.minDimension / 2
-                    )
-                }
-                Text(
-                    text = "Time:HH:MM:SS",
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = "time state",
-                fontSize = 32.sp,
-                modifier = Modifier
-                    .weight(5f)
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            LazyColumn(
-                modifier = Modifier
-                    .weight(45f),
-            ) {
-                items(5) { index ->
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .height(80.dp),
-                        shape = RoundedCornerShape(15.dp)
-
-                    ) {
-                        Row() {
-                            Text(
-                                text = "Mission $index",
-                                modifier = Modifier
-                                    .weight(1f),
-                                textAlign = TextAlign.Start
-                            )
-                            Text(
-                                text = "Mission ETF",
-                                modifier = Modifier
-                                    .weight(1f),
-                                textAlign = TextAlign.End
+    EveryClockedTheme(){
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text("EveryClocked")
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                /*TODO*/
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_clock_logo),
+                                contentDescription = null
                             )
                         }
+                    },
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = { /*TODO*/ }) {
+                    Icon(Icons.Filled.Add, contentDescription = null)
+                }
+            }
+        )
+        {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(45f)
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(top = 70.dp)
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawCircle(
+                            color = Color.Red,
+                            center = Offset(size.width / 2, size.height / 2),
+                            radius = size.minDimension / 2
+                        )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Time:HH:MM:SS",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "time state",
+                    fontSize = 32.sp,
+                    modifier = Modifier
+                        .weight(5f)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(45f),
+                ) {
+                    items(5) { index ->
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .height(80.dp),
+                            shape = RoundedCornerShape(15.dp)
+
+                        ) {
+                            Row() {
+                                Text(
+                                    text = "Mission $index",
+                                    modifier = Modifier
+                                        .weight(1f),
+                                    textAlign = TextAlign.Start
+                                )
+                                Text(
+                                    text = "Mission ETF",
+                                    modifier = Modifier
+                                        .weight(1f),
+                                    textAlign = TextAlign.End
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
             }
         }
