@@ -6,8 +6,10 @@ import android.content.res.Resources.Theme
 import android.graphics.drawable.DrawableContainer
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +17,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,8 +49,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,10 +73,11 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage(
-
-) {
-    EveryClockedTheme(){
+fun MainPage() {
+    BoxWithConstraints() {
+        // Adopt as more devices as possible
+        val windowWidth = maxWidth
+        val buttonSize = windowWidth * 3 / 5
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -73,9 +86,7 @@ fun MainPage(
                     },
                     navigationIcon = {
                         IconButton(
-                            onClick = {
-                                /*TODO*/
-                            }
+                            onClick = { /*TODO*/ }
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_clock_logo),
@@ -98,30 +109,45 @@ fun MainPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .weight(45f)
-                        .background(MaterialTheme.colorScheme.surface)
+                        .height(windowWidth)
+                        .width(windowWidth)
                         .padding(top = 70.dp)
                 ) {
-                    Canvas(modifier = Modifier.fillMaxSize()) {
-                        drawCircle(
-                            color = Color.Red,
-                            center = Offset(size.width / 2, size.height / 2),
-                            radius = size.minDimension / 2
+                    Button(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier
+                            .size(buttonSize)
+                            .clip(CircleShape),
+                    ) {
+                        Text("size")
+                    }
+                    Canvas(modifier = Modifier
+                        .fillMaxSize()
+                        .size(250.dp)) {
+                        val strokeWidth = 4.dp.toPx()
+                        val innerRadius = (size.minDimension - strokeWidth) / 2
+                        drawArc(
+                            color = Color.LightGray,
+                            startAngle = -90f,
+                            sweepAngle = 270f, // set progress here
+                            useCenter = false,
+                            topLeft = Offset(
+                                (size.width - innerRadius * 2) / 2,
+                                (size.height - innerRadius * 2) / 2
+                            ),
+                            size = Size(innerRadius * 2, innerRadius * 2),
+                            style = Stroke(width = strokeWidth)
                         )
                     }
-                    Text(
-                        text = "Time:HH:MM:SS",
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+//                Text("Button", color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = "time state",
                     fontSize = 32.sp,
                     modifier = Modifier
-                        .weight(5f)
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 LazyColumn(
@@ -135,8 +161,10 @@ fun MainPage(
                                 .fillMaxWidth()
                                 .padding(8.dp)
                                 .height(80.dp),
-                            shape = RoundedCornerShape(15.dp)
-
+                            shape = RoundedCornerShape(15.dp),
+//                        shape = CircleShape,
+                            colors = ButtonDefaults.buttonColors
+                                (containerColor = MaterialTheme.colorScheme.secondary)
                         ) {
                             Row() {
                                 Text(
