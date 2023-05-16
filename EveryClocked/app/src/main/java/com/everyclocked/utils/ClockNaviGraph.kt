@@ -2,11 +2,13 @@ package com.everyclocked.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.everyclocked.focusmode.FocusMode
+import com.everyclocked.home.MainPage
+import com.everyclocked.settings.SettingPage
 
 @Composable
 fun ClockNavGraph(
@@ -22,13 +24,13 @@ fun ClockNavGraph(
         modifier = modifier
     ) {
         composable(EveryClockedDestinations.HOME_ROUTE) {
-
+            MainPage()
         }
         composable(EveryClockedDestinations.FOCUS_MODE_ROUTE) {
-
+            FocusMode()
         }
         composable(EveryClockedDestinations.SETTINGS_ROUTE) {
-
+            SettingPage()
         }
     }
 }

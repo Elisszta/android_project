@@ -1,4 +1,4 @@
-package com.everyclocked.componentpages
+package com.everyclocked.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
