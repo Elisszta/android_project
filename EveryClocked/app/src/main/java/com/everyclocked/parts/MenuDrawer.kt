@@ -36,7 +36,7 @@ fun AppDrawer(
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ModalDrawerSheet {
+    ModalDrawerSheet(modifier) {
         EveryClockedLogo(
             modifier = Modifier.padding(horizontal = 28.dp, vertical = 24.dp)
         )
