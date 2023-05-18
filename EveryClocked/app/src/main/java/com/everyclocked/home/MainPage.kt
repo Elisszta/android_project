@@ -201,9 +201,11 @@ fun MainPage(
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewMainPageUI() {
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        MainPage(
-            openDrawer = { }
-        )
+    EveryClockedTheme() {
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            MainPage(
+                openDrawer = { }
+            )
+        }
     }
 }
