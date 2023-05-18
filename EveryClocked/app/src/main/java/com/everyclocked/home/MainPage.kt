@@ -74,7 +74,9 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage(){
+fun MainPage(
+    openDrawer: () -> Unit,
+){
     EveryClockedTheme {
         BoxWithConstraints() {
             // Adopt as more devices as possible
@@ -88,7 +90,7 @@ fun MainPage(){
                         },
                         navigationIcon = {
                             IconButton(
-                                onClick = { /*TODO*/ },
+                                onClick = { openDrawer },
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_clock_logo),
@@ -201,6 +203,8 @@ fun MainPage(){
 @Composable
 fun PreviewMainPageUI() {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        MainPage()
+        MainPage(
+            openDrawer = { }
+        )
     }
 }

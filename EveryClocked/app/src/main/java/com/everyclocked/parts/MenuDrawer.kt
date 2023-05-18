@@ -77,19 +77,6 @@ private fun EveryClockedLogo(modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
-private fun DeveloperLogo(modifier: Modifier = Modifier) {
-    Column(modifier) {
-        Icon(
-            painter = painterResource(R.drawable.ic_clock_logo),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
-        )
-        Spacer(Modifier.width(12.dp))
-        Text(text = "Developer", style = MaterialTheme.typography.titleMedium)
-    }
-}
-
 @Preview("Drawer contents")
 @Preview("Drawer contents dark", uiMode = UI_MODE_NIGHT_YES)
 @Composable
