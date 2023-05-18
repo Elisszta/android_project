@@ -13,7 +13,6 @@ import com.everyclocked.settings.SettingPage
 
 @Composable
 fun ClockNavGraph(
-    isExpandedScreen: Boolean,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
@@ -25,7 +24,7 @@ fun ClockNavGraph(
         modifier = modifier
     ) {
         composable(EveryClockedDestinations.HOME_ROUTE) {
-            MainPage()
+            MainPage(openDrawer)
         }
         composable(EveryClockedDestinations.FOCUS_MODE_ROUTE) {
             FocusMode()

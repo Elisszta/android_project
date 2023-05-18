@@ -36,7 +36,7 @@ fun AppDrawer(
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ModalDrawerSheet {
+    ModalDrawerSheet(modifier) {
         EveryClockedLogo(
             modifier = Modifier.padding(horizontal = 28.dp, vertical = 24.dp)
         )
@@ -74,19 +74,6 @@ private fun EveryClockedLogo(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.width(12.dp))
         Text(text = "EveryClocked", style = MaterialTheme.typography.titleMedium)
-    }
-}
-
-@Composable
-private fun DeveloperLogo(modifier: Modifier = Modifier) {
-    Column(modifier) {
-        Icon(
-            painter = painterResource(R.drawable.ic_clock_logo),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
-        )
-        Spacer(Modifier.width(12.dp))
-        Text(text = "Developer", style = MaterialTheme.typography.titleMedium)
     }
 }
 

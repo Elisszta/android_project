@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.content.res.Resources.Theme
 import android.graphics.drawable.DrawableContainer
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -80,7 +81,9 @@ import java.time.Duration
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage() {
+fun MainPage(
+    openDrawer: () -> Unit,
+) {
     BoxWithConstraints() {
         // Adopt as more devices as possible
         val windowWidth = maxWidth
@@ -108,7 +111,7 @@ fun MainPage() {
                     },
                     navigationIcon = {
                         IconButton(
-                            onClick = { /*TODO*/ }
+                            onClick = { openDrawer }
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_clock_logo),
@@ -148,9 +151,11 @@ fun MainPage() {
                     ) {
                         Text(displayMsg.value)
                     }
-                    Canvas(modifier = Modifier
-                        .fillMaxSize()
-                        .size(250.dp)) {
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .size(250.dp)
+                    ) {
                         val strokeWidth = 4.dp.toPx()
                         val innerRadius = (size.minDimension - strokeWidth) / 2
                         drawArc(
@@ -178,8 +183,13 @@ fun MainPage() {
                     modifier = Modifier
                         .weight(45f),
                 ) {
-                    items(missionList.size) {index ->
-                        MissionLayout(missionList, missionList[index], curMission = curMission, windowWidth)
+                    items(missionList.size) { index ->
+                        MissionLayout(
+                            missionList,
+                            missionList[index],
+                            curMission = curMission,
+                            windowWidth
+                        )
                     }
                 }
             }
@@ -187,38 +197,13 @@ fun MainPage() {
     }
 }
 
-
-/**
- * Confirm the drawer state to pass to the modal drawer.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun rememberSizeAwareDrawerState(isExpandedScreen: Boolean): DrawerState {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    return if (!isExpandedScreen) {
-        drawerState
-    } else {
-        DrawerState(DrawerValue.Closed)
-    }
-}
-
 @Preview
-@Composable
-fun PreviewMainPageUI() {
-    EveryClockedTheme() {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            MainPage()
-        }
-    }
-}
-
-//Dark Version Preview
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewMainPageUIDark() {
-    EveryClockedTheme(darkTheme = true) {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            MainPage()
-        }
+fun PreviewMainPageUI() {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        MainPage(
+            openDrawer = { }
+        )
     }
 }
