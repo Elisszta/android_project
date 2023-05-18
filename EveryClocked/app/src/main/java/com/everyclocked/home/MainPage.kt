@@ -149,7 +149,7 @@ fun MainPage(
                             .size(buttonSize)
                             .clip(CircleShape),
                     ) {
-                        Text(displayMsg.value)
+                        Text("Clock up")
                     }
                     Canvas(
                         modifier = Modifier
@@ -184,14 +184,17 @@ fun MainPage(
                         .weight(45f),
                 ) {
                     items(missionList.size) { index ->
-                        MissionLayout(
-                            missionList,
-                            missionList[index],
-                            curMission = curMission,
-                            windowWidth
-                        )
+                        if (!missionList[index].isHidden) {
+                            MissionLayout(
+                                missionList,
+                                index,
+                                curMission = curMission,
+                                windowWidth
+                            )
+                        }
                     }
                 }
+//                missionList.removeIf{it.isHidden}
             }
         }
     }
