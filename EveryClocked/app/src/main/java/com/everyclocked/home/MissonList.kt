@@ -48,8 +48,8 @@ fun SingleMissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
     }
     val name = mission.missionName
     val remainingTime = mission.remainingTime
-    val minutes = remainingTime.toMinutes()
-    val seconds = remainingTime.seconds - minutes * 60
+    val minutes = remainingTime / 60
+    val seconds = remainingTime - minutes * 60
     val coroutineScope = rememberCoroutineScope()
     AnimatedVisibility(visible = visible[missionIndex].value) {
         Button(

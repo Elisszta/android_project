@@ -4,7 +4,7 @@ import java.time.Duration
 
 data class Mission(
     var missionName: String = "mission",
-    var remainingTime: Duration = Duration.ofMinutes(25),
+    var remainingTime: Int = 25 * 60,
     var isHidden: Boolean = false,
 ) {
 }
