@@ -3,9 +3,7 @@ package com.everyclocked.utils
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -37,6 +35,33 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
         if (sharedPreference.getInt("num", -1) < 0) {
             sharedPreference.edit().putInt("num", 0).apply()
         }
+
+        /* Test */
+//        val gson = Gson()
+//        val mission = Mission("Saved Mission")
+//        sharedPreference.edit().putString("test", gson.toJson(mission)).apply()
+    }
+
+    /** Test function */
+    fun getOne(): Mission {
+        val saved = sharedPreference.getString("test", null)
+        if (saved != null) {
+            val gson = Gson()
+            return gson.fromJson(saved, Mission::class.java)
+        }
+        return Mission("Wrong one!")
+    }
+
+    fun insertOne(list: SnapshotStateList<Mission>) {
+        val gson = Gson()
+        val saved = sharedPreference.getString("test", null)
+        list.add(gson.fromJson(saved, Mission::class.java))
+    }
+
+    /** Test function end */
+
+    fun getSize(): Int {
+        return sharedPreference.getInt("num", -1)
     }
 
     /** This function sets the color for the clock on the Main page */
@@ -45,17 +70,23 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
         sharedPreference.edit().putFloat("R", R).putFloat("G", G).putFloat("B", B).apply()
     }
 
-    fun readMissionList(): SnapshotStateList<Mission> {
+    fun readMissionList(missionList: SnapshotStateList<Mission>): SnapshotStateList<Mission> {
         val numMission = sharedPreference.getInt("num", 0)
-        val index = 0
-        val missionList = mutableStateListOf<Mission>()
+        var index = 1
         val gson = Gson()
         while (index <= numMission) {
             val savedJson = sharedPreference.getString("m${index}", null)
             if (savedJson != null) {
                 missionList.add(gson.fromJson(savedJson, Mission::class.java))
             }
+            index += 1
         }
         return missionList
+    }
+
+    fun addNewMission(index: Int, mission: Mission) {
+        val gson = Gson()
+        sharedPreference.edit().putString("m${index}", gson.toJson(mission))
+            .putInt("num", sharedPreference.getInt("num", -1) + 1).apply()
     }
 }

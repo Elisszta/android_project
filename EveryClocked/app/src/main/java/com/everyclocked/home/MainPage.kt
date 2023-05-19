@@ -1,8 +1,6 @@
 package com.everyclocked.home
 
 import android.annotation.SuppressLint
-import android.app.Application
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,14 +22,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,13 +38,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.everyclocked.R
-import com.everyclocked.ui.theme.EveryClockedTheme
 import com.everyclocked.utilclass.Mission
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.everyclocked.utils.ClockViewModel
 
 
@@ -57,7 +49,7 @@ import com.everyclocked.utils.ClockViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(
-    viewModel: ClockViewModel
+    clockVM: ClockViewModel
     ) {
     BoxWithConstraints {
         // Adopt as more devices as possible
@@ -68,14 +60,21 @@ fun MainPage(
         var missionList = remember {
             mutableStateListOf<Mission>()
         }
+        // Read in mission list when application is launched
+        LaunchedEffect(key1 = false)
+        { clockVM.readMissionList(missionList) }
         val displayMsg = remember {
             mutableStateOf("Clock up")
         }
+        displayMsg.value = clockVM.getSize().toString()
         val curMission = remember {
             mutableStateOf<Mission?>(null)
         }
         val missionRemoved = remember {
             mutableStateOf(false)
+        }
+        val newMission = remember {
+            mutableStateOf<Mission?>(null)
         }
         val newMissionName = remember {
             mutableStateOf("New Mission")
@@ -89,7 +88,17 @@ fun MainPage(
 
         // some side effect
         if (newMissionCreate.value) {
-            NewMissionDialog(newMissionName, newMissionDuration, newMissionCreate, missionList)
+            NewMissionDialog(
+                newMissionName,
+                newMissionDuration,
+                newMissionCreate,
+                newMission
+            )
+        }
+        if (newMission.value != null) {
+            missionList.add(newMission.value!!)
+            clockVM.addNewMission(missionList.size, newMission.value!!)
+            newMission.value = null
         }
         if (curMission.value != null) {
             if (!curMission.value!!.isHidden) {
@@ -101,7 +110,16 @@ fun MainPage(
             changeDisplay(display = displayMsg, curMission = curMission)
         }
         LaunchedEffect(key1 = missionRemoved) {
-            missionList.removeIf{it.isHidden}
+            var max = missionList.size
+            var index = 0
+            while (index < max) {
+                if (missionList[index].isHidden) {
+                    missionList.removeAt(index)
+                    index --
+                    max --
+                }
+                index ++
+            }
         }
 
         // Main Body of the Layout
@@ -199,19 +217,6 @@ fun MainPage(
                     }
                 }
             }
-        }
-    }
-}
-
-@Preview
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewMainPageUI() {
-    val app = Application()
-    val viewModel= ClockViewModel(app)
-    EveryClockedTheme() {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            MainPage( viewModel )
         }
     }
 }
