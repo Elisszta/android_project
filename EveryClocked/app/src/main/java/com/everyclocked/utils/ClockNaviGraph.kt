@@ -16,7 +16,8 @@ fun ClockNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
-    startDestination: String = EveryClockedDestinations.HOME_ROUTE
+    startDestination: String = EveryClockedDestinations.HOME_ROUTE,
+    viewModel: ClockViewModel
 ) {
     NavHost(
         navController = navController,
@@ -24,7 +25,7 @@ fun ClockNavGraph(
         modifier = modifier
     ) {
         composable(EveryClockedDestinations.HOME_ROUTE) {
-            MainPage(openDrawer)
+            MainPage(viewModel)
         }
         composable(EveryClockedDestinations.FOCUS_MODE_ROUTE) {
             FocusMode()

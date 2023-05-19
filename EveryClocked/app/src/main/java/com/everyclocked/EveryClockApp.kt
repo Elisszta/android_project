@@ -14,6 +14,7 @@ import com.everyclocked.home.MainPage
 import com.everyclocked.parts.AppDrawer
 import com.everyclocked.ui.theme.EveryClockedTheme
 import com.everyclocked.utils.ClockNavGraph
+import com.everyclocked.utils.ClockViewModel
 import com.everyclocked.utils.EveryClockedDestinations
 import com.everyclocked.utils.EveryClockedNavigationActions
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EveryClockApp(
     windowSizeClass: WindowSizeClass,
+    viewModel: ClockViewModel
 ) {
     val navController = rememberNavController()
     val navigationActions = remember(navController) {
@@ -45,7 +47,8 @@ fun EveryClockApp(
         }) {
         ClockNavGraph(
             navController = navController,
-            openDrawer = { coroutineScope.launch { drawerState.open() } }
+            openDrawer = { coroutineScope.launch { drawerState.open() } },
+            viewModel = viewModel
         )
     }
 }

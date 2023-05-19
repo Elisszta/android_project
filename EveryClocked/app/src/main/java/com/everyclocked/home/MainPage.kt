@@ -1,6 +1,7 @@
 package com.everyclocked.home
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -48,21 +49,23 @@ import androidx.compose.ui.unit.sp
 import com.everyclocked.R
 import com.everyclocked.ui.theme.EveryClockedTheme
 import com.everyclocked.utilclass.Mission
-import com.everyclocked.utilclass.SingleMissionLayout
-import java.time.Duration
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.everyclocked.utils.ClockViewModel
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(
-    isFocusModeOn: MutableState<Boolean> = mutableStateOf(false),
-    clockColor: Color = MaterialTheme.colorScheme.primary,
+    viewModel: ClockViewModel
     ) {
     BoxWithConstraints {
         // Adopt as more devices as possible
         val windowWidth = maxWidth
         val buttonSize = windowWidth * 3 / 5
-        val missionList = remember {
+
+        // Application val
+        var missionList = remember {
             mutableStateListOf<Mission>()
         }
         val displayMsg = remember {
@@ -83,6 +86,8 @@ fun MainPage(
         val newMissionCreate = remember {
             mutableStateOf(false)
         }
+
+        // some side effect
         if (newMissionCreate.value) {
             NewMissionDialog(newMissionName, newMissionDuration, newMissionCreate, missionList)
         }
@@ -98,6 +103,8 @@ fun MainPage(
         LaunchedEffect(key1 = missionRemoved) {
             missionList.removeIf{it.isHidden}
         }
+
+        // Main Body of the Layout
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -106,7 +113,7 @@ fun MainPage(
                     },
                     navigationIcon = {
                         IconButton(
-                            onClick = { openDrawer }
+                            onClick = { /*TODO:*/}
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_clock_logo),
@@ -200,11 +207,11 @@ fun MainPage(
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewMainPageUI() {
+    val app = Application()
+    val viewModel= ClockViewModel(app)
     EveryClockedTheme() {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            MainPage(
-                openDrawer = { }
-            )
+            MainPage( viewModel )
         }
     }
 }

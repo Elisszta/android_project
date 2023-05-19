@@ -1,5 +1,6 @@
 package com.everyclocked.home
 
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,13 +17,18 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.everyclocked.parts.items
+import com.google.gson.Gson
 import java.time.Duration
+
 
 
 fun changeDisplay(display: MutableState<String>, curMission: MutableState<Mission?>) {
@@ -33,6 +39,20 @@ fun changeDisplay(display: MutableState<String>, curMission: MutableState<Missio
             display.value = "Clock up"
         }
     }
+}
+
+fun readMissionList(sharedPreferences: SharedPreferences): SnapshotStateList<Mission> {
+    val numMission = sharedPreferences.getInt("num", 0)
+    val index: Int = 0
+    val missionList = mutableStateListOf<Mission>()
+    val gson = Gson()
+    while (index <= numMission) {
+        val savedJson = sharedPreferences.getString("m${index}", null)
+        if (savedJson != null) {
+            missionList.add(gson.fromJson(savedJson, Mission::class.java))
+        }
+    }
+    return missionList
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

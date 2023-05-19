@@ -1,12 +1,9 @@
-package com.everyclocked.utilclass
+package com.everyclocked.home
 
-import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,11 +30,12 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import com.everyclocked.utilclass.Mission
 
 @Composable
 fun SingleMissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
-                  curMission: MutableState<Mission?>, width: Dp,
-                  curMissionChanged: MutableState<Boolean>) {
+                        curMission: MutableState<Mission?>, width: Dp,
+                        curMissionChanged: MutableState<Boolean>) {
     val mission = missionList[missionIndex]
     val offsetXs = remember {
         missionList.map{ Animatable(0f) }
