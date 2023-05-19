@@ -1,5 +1,6 @@
 package com.everyclocked.utilclass
 
+import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.Orientation
@@ -24,17 +25,22 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 
 @Composable
-fun MissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
-                  curMission: MutableState<Mission?>, width: Dp) {
-    var mission = missionList[missionIndex]
-    var offsetXs = remember {
-        missionList.map{ mutableStateOf(0f) }
+fun SingleMissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
+                  curMission: MutableState<Mission?>, width: Dp,
+                  curMissionChanged: MutableState<Boolean>) {
+    val mission = missionList[missionIndex]
+    val offsetXs = remember {
+        missionList.map{ Animatable(0f) }
     }
     val widthPx = with(LocalDensity.current) {
         width.toPx()
@@ -46,6 +52,7 @@ fun MissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
     val remainingTime = mission.remainingTime
     val minutes = remainingTime.toMinutes()
     val seconds = remainingTime.seconds - minutes * 60
+    val coroutineScope = rememberCoroutineScope()
     AnimatedVisibility(visible = visible[missionIndex].value) {
         Button(
             onClick = { curMission.value = mission },
@@ -53,16 +60,28 @@ fun MissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
                 .draggable(
                     orientation = Orientation.Horizontal,
                     state = rememberDraggableState { delta ->
-                        offsetXs[missionIndex].value += delta
+                        coroutineScope.launch {
+                            offsetXs[missionIndex].
+                            snapTo(offsetXs[missionIndex].value + delta)
+                        }
                     },
                     onDragStopped = {
-                        if (offsetXs[missionIndex].value > (widthPx / 4)) {
+                        if (-offsetXs[missionIndex].value > (widthPx / 4)) {
                             visible[missionIndex].value = false
                             mission.isHidden = true
+                            curMissionChanged.value = true
                         } else {
-                            offsetXs[missionIndex].value = 0f
+                            coroutineScope.launch {
+                                offsetXs[missionIndex].animateTo(
+                                    targetValue = 0f,
+                                    animationSpec = tween(
+                                        durationMillis = 300,
+                                        delayMillis = 0
+                                    )
+                                )
+                            }
                         }
-                    }
+                    },
                 )
                 .offset { IntOffset(offsetXs[missionIndex].value.roundToInt(), 0) }
                 .padding(8.dp)
