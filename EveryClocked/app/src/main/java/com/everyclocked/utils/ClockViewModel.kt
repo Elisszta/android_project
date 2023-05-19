@@ -27,12 +27,12 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
             sharedPreference.edit().putBoolean("focusE", true).apply()
             sharedPreference.edit().putBoolean("focusM", false).apply()
         }
-        if (sharedPreference.getBoolean("colorE", false)) {
+        if (!sharedPreference.contains("colorE")) {
             _clockColorR.value = sharedPreference.getFloat("R", 0f)
             _clockColorG.value = sharedPreference.getFloat("G", 0f)
             _clockColorB.value = sharedPreference.getFloat("B", 0f)
         }
-        if (sharedPreference.getInt("num", -1) < 0) {
+        if (!sharedPreference.contains("num")) {
             sharedPreference.edit().putInt("num", 0).apply()
         }
 
@@ -88,5 +88,16 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
         val gson = Gson()
         sharedPreference.edit().putString("m${index}", gson.toJson(mission))
             .putInt("num", sharedPreference.getInt("num", -1) + 1).apply()
+    }
+
+    fun reWriteList(list: SnapshotStateList<Mission>) {
+        val gson = Gson()
+        val newSize = list.size
+        sharedPreference.edit().putInt("num", newSize).apply()
+        var index = 1
+        while (index <= newSize) {
+            sharedPreference.edit().putString("m${index}", gson.toJson(list[index - 1])).apply()
+            index += 1
+        }
     }
 }

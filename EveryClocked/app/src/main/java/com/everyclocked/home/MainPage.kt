@@ -66,7 +66,6 @@ fun MainPage(
         val displayMsg = remember {
             mutableStateOf("Clock up")
         }
-        displayMsg.value = clockVM.getSize().toString()
         val curMission = remember {
             mutableStateOf<Mission?>(null)
         }
@@ -108,18 +107,10 @@ fun MainPage(
         if (missionRemoved.value) {
             missionRemoved.value = false
             changeDisplay(display = displayMsg, curMission = curMission)
+            clockVM.reWriteList(missionList)
         }
-        LaunchedEffect(key1 = missionRemoved) {
-            var max = missionList.size
-            var index = 0
-            while (index < max) {
-                if (missionList[index].isHidden) {
-                    missionList.removeAt(index)
-                    index --
-                    max --
-                }
-                index ++
-            }
+        LaunchedEffect(missionRemoved.value) {
+            missionList.removeIf{ it.isHidden }
         }
 
         // Main Body of the Layout
@@ -209,7 +200,7 @@ fun MainPage(
                             SingleMissionLayout(
                                 missionList,
                                 index,
-                                curMission = curMission,
+                                curMission,
                                 windowWidth,
                                 missionRemoved
                             )
