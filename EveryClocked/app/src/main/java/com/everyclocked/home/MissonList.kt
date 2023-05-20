@@ -65,7 +65,16 @@ fun SingleMissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
                     },
                     onDragStopped = {
                         if (-offsetXs[missionIndex].value > (widthPx / 4)) {
-                            visible[missionIndex].value = false
+                            coroutineScope.launch {
+                                offsetXs[missionIndex].animateTo(
+                                    targetValue = -widthPx,
+                                    animationSpec = tween(
+                                        durationMillis = 300,
+                                        delayMillis = 0
+                                    ),
+                                )
+                                visible[missionIndex].value = false
+                            }
                             mission.isHidden = true
                             curMissionChanged.value = true
                         } else {

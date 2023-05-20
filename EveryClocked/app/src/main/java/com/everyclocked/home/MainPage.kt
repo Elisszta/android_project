@@ -57,7 +57,7 @@ fun MainPage(
         val buttonSize = windowWidth * 3 / 5
 
         // Application val
-        var missionList = remember {
+        val missionList = remember {
             mutableStateListOf<Mission>()
         }
         // Read in mission list when application is launched
