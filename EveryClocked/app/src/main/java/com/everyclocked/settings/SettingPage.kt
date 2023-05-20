@@ -31,6 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.everyclocked.home.MainPage
 import com.everyclocked.ui.theme.EveryClockedTheme
 import com.everyclocked.utils.ClockViewModel
 
@@ -38,7 +40,8 @@ import com.everyclocked.utils.ClockViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingPage(
-    clockVM: ClockViewModel
+    clockVM: ClockViewModel,
+    navController: NavController
 ) {
     val showAbout = remember{
         mutableStateOf(false)
@@ -59,7 +62,7 @@ fun SettingPage(
                     Text("Settings")
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO: implement the navigation part*/ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = null,

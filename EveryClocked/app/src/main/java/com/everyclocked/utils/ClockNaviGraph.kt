@@ -27,10 +27,10 @@ fun ClockNavGraph(
             MainPage(viewModel, openDrawer)
         }
         composable(EveryClockedDestinations.FOCUS_MODE_ROUTE) {
-            FocusMode()
+            FocusMode(navController)
         }
         composable(EveryClockedDestinations.SETTINGS_ROUTE) {
-            SettingPage(viewModel)
+            SettingPage(viewModel, navController)
         }
     }
 }
