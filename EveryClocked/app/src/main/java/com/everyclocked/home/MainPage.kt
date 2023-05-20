@@ -1,6 +1,9 @@
 package com.everyclocked.home
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,10 +29,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import com.everyclocked.R
 import com.everyclocked.utilclass.Mission
 import com.everyclocked.utils.ClockViewModel
+import kotlin.properties.Delegates
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -85,6 +92,9 @@ fun MainPage(
         val newMissionCreate = remember {
             mutableStateOf(false)
         }
+        var isTimerStart = remember {
+            mutableStateOf(false)
+        }
 
         // some side effect
         if (newMissionCreate.value) {
@@ -114,6 +124,36 @@ fun MainPage(
             missionList.removeIf{ it.isHidden }
         }
 
+        // Timer Function
+        var Hours by Delegates.notNull<Int>()
+        var Minutes by Delegates.notNull<Int>()
+        var Seconds by Delegates.notNull<Int>()
+        var totalRemainTime by Delegates.notNull<Int>()
+        if(isTimerStart.value){
+            var trigger by remember { mutableStateOf(curMission.value!!.remainingTime) }
+            val elapsed by animateIntAsState(
+                targetValue = trigger * 1000,
+                animationSpec =
+                tween(curMission.value!!.remainingTime * 1000, easing = LinearEasing)
+            )
+
+            DisposableEffect(Unit) {
+                trigger = 0
+                onDispose { }
+            }
+            val (hou, min, sec) = remember(elapsed / 1000) {
+                val elapsedInSec = elapsed / 1000
+                val hou = elapsedInSec / 3600
+                val min = elapsedInSec / 60 - hou * 60
+                val sec = elapsedInSec % 60
+                Triple(hou, min, sec)
+            }
+            Hours = hou
+            Minutes = min
+            Seconds = sec
+            totalRemainTime = hou * 3600 + min * 60 + sec
+        }
+
         // Main Body of the Layout
         Scaffold(
             topBar = {
@@ -136,7 +176,6 @@ fun MainPage(
             floatingActionButton = {
                 FloatingActionButton(onClick = {
                     newMissionCreate.value = true
-
                 }) {
                     Icon(Icons.Filled.Add, contentDescription = null)
                 }
@@ -157,7 +196,7 @@ fun MainPage(
                         .padding(it)
                 ) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { isTimerStart.value = !isTimerStart.value },
                         modifier = Modifier
                             .size(buttonSize)
                             .clip(CircleShape),
@@ -187,7 +226,20 @@ fun MainPage(
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = "TimeState",
+                    text = if (isTimerStart.value) {
+                        val formattedHrs = String.format("%02d", Hours)
+                        val formattedMnt = String.format("%02d", Minutes)
+                        val formattedSec = String.format("%02d", Seconds)
+                        if (Hours > 0) {
+                            "$formattedHrs:$formattedMnt:$formattedSec"
+                        } else if(totalRemainTime != 0) {
+                            "$formattedMnt:$formattedSec"
+                        } else {
+                            "Time is up."
+                        }
+                    } else {
+                        "Time State"
+                    },
                     fontSize = 32.sp,
                     modifier = Modifier
                 )
