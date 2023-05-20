@@ -31,11 +31,15 @@ import kotlin.math.roundToInt
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import com.everyclocked.utilclass.Mission
+import com.everyclocked.utils.ClockViewModel
 
 @Composable
-fun SingleMissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
-                        curMission: MutableState<Mission?>, width: Dp,
-                        curMissionChanged: MutableState<Boolean>) {
+fun SingleMissionLayout(
+    missionList: MutableList<Mission>, missionIndex: Int,
+    curMission: MutableState<Mission?>, width: Dp,
+    curMissionChanged: MutableState<Boolean>,
+    viewModel: ClockViewModel
+) {
     val mission = missionList[missionIndex]
     val offsetXs = remember {
         missionList.map{ Animatable(0f) }
@@ -53,7 +57,10 @@ fun SingleMissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
     val coroutineScope = rememberCoroutineScope()
     AnimatedVisibility(visible = visible[missionIndex].value) {
         Button(
-            onClick = { curMission.value = mission },
+            onClick = {
+                curMission.value = mission;
+                viewModel.setNowMission(mission);
+                      },
             modifier = Modifier
                 .draggable(
                     orientation = Orientation.Horizontal,
@@ -113,6 +120,6 @@ fun SingleMissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-    }
+        }
     }
 }

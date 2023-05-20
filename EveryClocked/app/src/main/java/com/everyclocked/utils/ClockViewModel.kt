@@ -24,6 +24,8 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
     private val _clockColorB= MutableLiveData<Float>(0f)
     val clockColorB: LiveData<Float> = _clockColorB
 
+    var nowMission = MutableLiveData<Mission>()
+
     init {
         if (!sharedPreference.getBoolean("focusE", false)) {
             sharedPreference.edit().putBoolean("focusE", true).apply()
@@ -88,5 +90,10 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
             sharedPreference.edit().putString("m${index}", gson.toJson(list[index - 1])).apply()
             index += 1
         }
+    }
+
+    /** This function indicates the mission that is now working **/
+    fun setNowMission(mission: Mission) {
+        nowMission.value = mission
     }
 }

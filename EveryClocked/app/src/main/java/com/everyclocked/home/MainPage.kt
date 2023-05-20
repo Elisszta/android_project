@@ -1,6 +1,7 @@
 package com.everyclocked.home
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -53,6 +54,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -72,6 +74,8 @@ fun MainPage(
 ) {
     BoxWithConstraints {
 
+        val nowContext = LocalContext.current
+
         // Adopt as more devices as possible
         val windowWidth = maxWidth
         val buttonSize = windowWidth * 3 / 5
@@ -84,7 +88,6 @@ fun MainPage(
 
         var clockColor = MaterialTheme.colorScheme.secondary
         var clockColorReversed = Color(clockColor.toArgb() xor 0xffffff)
-
 
         if (hasCc.value!!) {
             clockColor = Color(ccRed.value!!, ccGreen.value!!, ccBlue.value!!)
@@ -122,6 +125,9 @@ fun MainPage(
         var isTimerStart = remember {
             mutableStateOf(false)
         }
+
+        // Set mission working now
+        curMission.value = clockVM.nowMission.value
 
         // some side effect
         if (newMissionCreate.value) {
@@ -222,7 +228,10 @@ fun MainPage(
                         .padding(it)
                 ) {
                     Button(
-                        onClick = { isTimerStart.value = !isTimerStart.value },
+                        onClick = { if (curMission.value == null) {
+                            Toast.makeText(nowContext, "Please select a mission",
+                                Toast.LENGTH_SHORT).show()
+                        }  else { isTimerStart.value = !isTimerStart.value } },
                         modifier = Modifier
                             .size(buttonSize)
                             .clip(CircleShape),
@@ -244,12 +253,18 @@ fun MainPage(
                         drawArc(
                             color = Color.LightGray,
                             startAngle = -90f,
-                            sweepAngle = if (isTimerStart.value) {
+                            sweepAngle = if ( isTimerStart.value && curMission.value != null ) {
                                 curMission.value!!.remainingTime /
                                         curMission.value!!.totalTime.toFloat() * 360f
-                            } else {
+                            } else if (
+                                curMission.value != null &&
+                                curMission.value!!.remainingTime != curMission.value!!.totalTime) {
+                                curMission.value!!.remainingTime /
+                                        curMission.value!!.totalTime.toFloat() * 360f
+                            }
+                            else {
                                 360f
-                            }, // set progress here
+                            }, // When pause, remember the progress status
                             useCenter = false,
                             topLeft = Offset(
                                 (size.width - innerRadius * 2) / 2,
@@ -273,7 +288,24 @@ fun MainPage(
                         } else {
                             "Time is up."
                         }
-                    } else {
+                    } //State when timer is running
+                    else if (curMission.value != null) {
+                        val formattedHrs =
+                            String.format("%02d", curMission.value!!.remainingTime / 3600)
+                        val formattedMnt =
+                            String.format("%02d", curMission.value!!.remainingTime / 60 -
+                                    curMission.value!!.remainingTime / 3600 * 60)
+                        val formattedSec =
+                            String.format("%02d", curMission.value!!.remainingTime % 60)
+                        if (curMission.value!!.remainingTime / 3600 > 0) {
+                            "$formattedHrs:$formattedMnt:$formattedSec"
+                        } else if (curMission.value!!.remainingTime > 0) {
+                            "$formattedMnt:$formattedSec"
+                        } else {
+                            "Time is up."
+                        }
+                    } //State when timer is paused
+                    else {
                         "Time State"
                     },
                     fontSize = 32.sp,
@@ -291,7 +323,8 @@ fun MainPage(
                                 index,
                                 curMission,
                                 windowWidth,
-                                missionRemoved
+                                missionRemoved,
+                                clockVM
                             )
                         }
                     }
