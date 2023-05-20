@@ -5,6 +5,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -21,28 +22,35 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,11 +66,26 @@ import kotlin.properties.Delegates
 fun MainPage(
     clockVM: ClockViewModel,
     openDrawer: () -> Unit = {},
-    ) {
+) {
     BoxWithConstraints {
+
+
         // Adopt as more devices as possible
         val windowWidth = maxWidth
         val buttonSize = windowWidth * 3 / 5
+
+        // Custom color vars
+        val hasCc = clockVM.hasCustomColor.observeAsState()
+        val ccRed = clockVM.clockColorR.observeAsState()
+        val ccBlue = clockVM.clockColorB.observeAsState()
+        val ccGreen = clockVM.clockColorG.observeAsState()
+
+        var clockColor = MaterialTheme.colorScheme.secondary
+
+
+        if (hasCc.value!!) {
+            clockColor = Color(ccRed.value!!, ccGreen.value!!, ccBlue.value!!)
+        }
 
         // Application val
         val missionList = remember {
@@ -121,14 +144,14 @@ fun MainPage(
             clockVM.reWriteList(missionList)
         }
         LaunchedEffect(missionRemoved.value) {
-            missionList.removeIf{ it.isHidden }
+            missionList.removeIf { it.isHidden }
         }
 
         // Timer Function
         var hours by Delegates.notNull<Int>()
         var minutes by Delegates.notNull<Int>()
         var seconds by Delegates.notNull<Int>()
-        if(isTimerStart.value){
+        if (isTimerStart.value) {
             var trigger by remember { mutableStateOf(curMission.value!!.remainingTime) }
             val elapsed by animateIntAsState(
                 targetValue = trigger * 1000,
@@ -199,6 +222,8 @@ fun MainPage(
                         modifier = Modifier
                             .size(buttonSize)
                             .clip(CircleShape),
+                        colors = ButtonDefaults.buttonColors
+                            (containerColor = clockColor)
                     ) {
                         Text(displayMsg.value)
                     }
@@ -212,10 +237,12 @@ fun MainPage(
                         drawArc(
                             color = Color.LightGray,
                             startAngle = -90f,
-                            sweepAngle = if(isTimerStart.value) {
+                            sweepAngle = if (isTimerStart.value) {
                                 curMission.value!!.remainingTime /
                                         curMission.value!!.totalTime.toFloat() * 360f
-                            } else { 360f }, // set progress here
+                            } else {
+                                360f
+                            }, // set progress here
                             useCenter = false,
                             topLeft = Offset(
                                 (size.width - innerRadius * 2) / 2,
@@ -234,7 +261,7 @@ fun MainPage(
                         val formattedSec = String.format("%02d", seconds)
                         if (hours > 0) {
                             "$formattedHrs:$formattedMnt:$formattedSec"
-                        } else if(curMission.value!!.remainingTime > 0) {
+                        } else if (curMission.value!!.remainingTime > 0) {
                             "$formattedMnt:$formattedSec"
                         } else {
                             "Time is up."

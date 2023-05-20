@@ -50,7 +50,7 @@ fun SettingPage(
         AboutUs(showDialog = showAbout)
     }
     if (showColor.value) {
-        ColorSelection(showDialog = showColor)
+        ColorSelection(showDialog = showColor, clockVM = clockVM)
     }
     Scaffold(
         topBar = {

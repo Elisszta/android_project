@@ -15,11 +15,13 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
         application.getSharedPreferences("EveryClocked", Context.MODE_PRIVATE)
     private val _isFocusMode = MutableLiveData<Boolean>()
     val isFocusMode: LiveData<Boolean> = _isFocusMode
-    private val _clockColorR = MutableLiveData<Float>()
+    private val _hasCustomColor = MutableLiveData<Boolean>()
+    val hasCustomColor: LiveData<Boolean> = _hasCustomColor
+    private val _clockColorR = MutableLiveData<Float>(0f)
     val clockColorR: LiveData<Float> = _clockColorR
-    private val _clockColorG = MutableLiveData<Float>()
+    private val _clockColorG = MutableLiveData<Float>(0f)
     val clockColorG: LiveData<Float> = _clockColorG
-    private val _clockColorB= MutableLiveData<Float>()
+    private val _clockColorB= MutableLiveData<Float>(0f)
     val clockColorB: LiveData<Float> = _clockColorB
 
     init {
@@ -27,11 +29,10 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
             sharedPreference.edit().putBoolean("focusE", true).apply()
             sharedPreference.edit().putBoolean("focusM", false).apply()
         }
-        if (!sharedPreference.contains("colorE")) {
-            _clockColorR.value = sharedPreference.getFloat("R", 0f)
-            _clockColorG.value = sharedPreference.getFloat("G", 0f)
-            _clockColorB.value = sharedPreference.getFloat("B", 0f)
-        }
+        _hasCustomColor.value = sharedPreference.getBoolean("colorE", false)
+        _clockColorR.value = sharedPreference.getFloat("R", 0f)
+        _clockColorB.value = sharedPreference.getFloat("B", 0f)
+        _clockColorG.value = sharedPreference.getFloat("G", 0f)
         if (!sharedPreference.contains("num")) {
             sharedPreference.edit().putInt("num", 0).apply()
         }
@@ -42,6 +43,17 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
     fun setRGB(R: Float, G: Float, B: Float) {
         sharedPreference.edit().putBoolean("colorE", true).apply()
         sharedPreference.edit().putFloat("R", R).putFloat("G", G).putFloat("B", B).apply()
+        _clockColorR.value = R
+        _clockColorG.value = G
+        _clockColorB.value = B
+    }
+
+    fun rmCustomColor() {
+        sharedPreference.edit().putBoolean("colorE", false).apply()
+    }
+
+    fun hasCustomColor(): Boolean {
+        return sharedPreference.getBoolean("colorE", false)
     }
 
     /** This function reads the mission list */

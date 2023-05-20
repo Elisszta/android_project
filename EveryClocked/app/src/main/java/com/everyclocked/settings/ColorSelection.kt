@@ -29,11 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.everyclocked.utils.ClockViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorSelection(
-    showDialog: MutableState<Boolean>
+    showDialog: MutableState<Boolean>,
+    clockVM: ClockViewModel
 ) {
     AlertDialog(
         modifier = Modifier.background(
@@ -60,7 +62,7 @@ fun ColorSelection(
         }
         Column(modifier = Modifier.padding(24.dp))
         {
-            Text ("Selected color")
+            Text("Selected color")
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -104,23 +106,37 @@ fun ColorSelection(
                 )
             }
             Button(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                onClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                onClick = {
+                    red.value = 0f
+                    green.value = 0f
+                    blue.value = 0f
+                    clockVM.rmCustomColor()
+                    showDialog.value = false
+                },
             ) {
                 Text("Reset Color")
             }
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = {},
-                        ) {
+                    onClick = {
+                        showDialog.value = false
+                    }) {
                     Text("Cancel")
                 }
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = {},
+                    onClick = {
+                        clockVM.setRGB(red.value, green.value, blue.value)
+                        showDialog.value = false
+                    },
                 ) {
                     Text("Apply")
                 }
