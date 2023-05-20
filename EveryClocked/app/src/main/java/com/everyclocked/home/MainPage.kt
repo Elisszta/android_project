@@ -136,7 +136,6 @@ fun MainPage(
             floatingActionButton = {
                 FloatingActionButton(onClick = {
                     newMissionCreate.value = true
-
                 }) {
                     Icon(Icons.Filled.Add, contentDescription = null)
                 }

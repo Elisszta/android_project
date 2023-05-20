@@ -1,8 +1,11 @@
 package com.everyclocked.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -29,10 +32,15 @@ fun NewMissionDialog(
     newMission: MutableState<Mission?>
 ) {
     AlertDialog(
+        modifier = Modifier.background(
+            color = MaterialTheme.colorScheme.background,
+            shape = RoundedCornerShape(8.dp)),
         onDismissRequest = { showDialog.value = false },
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
     ) {
-        Column() {
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
             Text(
                 text = "New mission's name and desired duration",
                 style = MaterialTheme.typography.titleMedium,
