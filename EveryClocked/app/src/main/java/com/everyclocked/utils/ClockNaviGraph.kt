@@ -25,7 +25,7 @@ fun ClockNavGraph(
         modifier = modifier
     ) {
         composable(EveryClockedDestinations.HOME_ROUTE) {
-            MainPage(viewModel)
+            MainPage(viewModel, openDrawer)
         }
         composable(EveryClockedDestinations.FOCUS_MODE_ROUTE) {
             FocusMode()

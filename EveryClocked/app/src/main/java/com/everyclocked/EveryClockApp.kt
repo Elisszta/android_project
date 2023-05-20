@@ -37,6 +37,7 @@ fun EveryClockApp(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     ModalNavigationDrawer(
+        drawerState = drawerState,
         drawerContent = {
             AppDrawer(
                 currentRoute = currentRoute,

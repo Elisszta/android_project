@@ -49,7 +49,8 @@ import com.everyclocked.utils.ClockViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(
-    clockVM: ClockViewModel
+    clockVM: ClockViewModel,
+    openDrawer: () -> Unit = {},
     ) {
     BoxWithConstraints {
         // Adopt as more devices as possible
@@ -122,7 +123,7 @@ fun MainPage(
                     },
                     navigationIcon = {
                         IconButton(
-                            onClick = { /*TODO:*/}
+                            onClick = { openDrawer() }
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_clock_logo),
@@ -153,7 +154,7 @@ fun MainPage(
                     modifier = Modifier
                         .height(windowWidth)
                         .width(windowWidth)
-                        .padding(top = 70.dp)
+                        .padding(it)
                 ) {
                     Button(
                         onClick = { /*TODO*/ },

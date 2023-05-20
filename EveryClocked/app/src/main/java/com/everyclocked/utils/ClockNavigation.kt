@@ -1,4 +1,4 @@
-package com.everyclocked.utils
+ package com.everyclocked.utils
 
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
