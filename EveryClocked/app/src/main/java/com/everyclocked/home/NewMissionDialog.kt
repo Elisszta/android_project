@@ -39,7 +39,7 @@ fun NewMissionDialog(
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
     ) {
         Column(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(24.dp)
         ) {
             Text(
                 text = "New mission's name and desired duration",
@@ -60,7 +60,10 @@ fun NewMissionDialog(
                 label = { Text("Duration(min)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
-            Row(modifier = Modifier.align(Alignment.End)) {
+            Row(
+                modifier = Modifier.align(Alignment.End)
+                    .padding(top = 16.dp)
+            ) {
                 Button(
                     onClick = {
                         showDialog.value = false

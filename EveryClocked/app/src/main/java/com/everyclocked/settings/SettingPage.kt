@@ -45,6 +45,12 @@ fun SettingPage() {
     val showAbout = remember{
         mutableStateOf(false)
     }
+    val showColor = remember{
+        mutableStateOf(false)
+    }
+    if (showAbout.value) {
+        AboutUs(showDialog = showAbout)
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -52,7 +58,7 @@ fun SettingPage() {
                     Text("Settings")
                 },
                 navigationIcon = {
-                    IconButton(onClick = {  }) {
+                    IconButton(onClick = { /*TODO: implement the navigation part*/ }) {
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = null,
@@ -95,7 +101,7 @@ fun SettingPage() {
                     .fillMaxWidth()
                     .height(80.dp)
                     .clickable {
-                        /*TODO*/
+                        showAbout.value = true
                     },
             ) {
                 Spacer(Modifier.width(20.dp))
