@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,23 +24,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.everyclocked.EveryClockApp
 import com.everyclocked.ui.theme.EveryClockedTheme
+import com.everyclocked.utils.ClockViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingPage() {
+fun SettingPage(
+    clockVM: ClockViewModel
+) {
     val showAbout = remember{
         mutableStateOf(false)
     }
@@ -50,6 +48,9 @@ fun SettingPage() {
     }
     if (showAbout.value) {
         AboutUs(showDialog = showAbout)
+    }
+    if (showColor.value) {
+        ColorSelection(showDialog = showColor)
     }
     Scaffold(
         topBar = {
@@ -80,7 +81,7 @@ fun SettingPage() {
                     .fillMaxWidth()
                     .height(80.dp)
                     .clickable {
-                        /*TODO*/
+                        showColor.value = true
                     },
             ){
                 Spacer(Modifier.width(20.dp))
@@ -116,48 +117,6 @@ fun SettingPage() {
                     text = "About us",
                 )
             }
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ColorSettings() {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("Settings")
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            Icons.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            )
-        },
-    ) {
-        it
-    }
-}
-
-
-@Preview
-@Preview("Drawer contents dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreViewSettings() {
-    EveryClockedTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            SettingPage()
         }
     }
 }

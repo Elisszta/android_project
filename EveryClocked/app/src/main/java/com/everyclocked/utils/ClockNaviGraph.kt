@@ -31,7 +31,7 @@ fun ClockNavGraph(
             FocusMode()
         }
         composable(EveryClockedDestinations.SETTINGS_ROUTE) {
-            SettingPage()
+            SettingPage(viewModel)
         }
     }
 }

@@ -36,32 +36,6 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
             sharedPreference.edit().putInt("num", 0).apply()
         }
 
-        /* Test */
-//        val gson = Gson()
-//        val mission = Mission("Saved Mission")
-//        sharedPreference.edit().putString("test", gson.toJson(mission)).apply()
-    }
-
-    /** Test function */
-    fun getOne(): Mission {
-        val saved = sharedPreference.getString("test", null)
-        if (saved != null) {
-            val gson = Gson()
-            return gson.fromJson(saved, Mission::class.java)
-        }
-        return Mission("Wrong one!")
-    }
-
-    fun insertOne(list: SnapshotStateList<Mission>) {
-        val gson = Gson()
-        val saved = sharedPreference.getString("test", null)
-        list.add(gson.fromJson(saved, Mission::class.java))
-    }
-
-    /** Test function end */
-
-    fun getSize(): Int {
-        return sharedPreference.getInt("num", -1)
     }
 
     /** This function sets the color for the clock on the Main page */
@@ -70,6 +44,7 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
         sharedPreference.edit().putFloat("R", R).putFloat("G", G).putFloat("B", B).apply()
     }
 
+    /** This function reads the mission list */
     fun readMissionList(missionList: SnapshotStateList<Mission>): SnapshotStateList<Mission> {
         val numMission = sharedPreference.getInt("num", 0)
         var index = 1
@@ -84,12 +59,14 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
         return missionList
     }
 
+    /** adds new mission to the list */
     fun addNewMission(index: Int, mission: Mission) {
         val gson = Gson()
         sharedPreference.edit().putString("m${index}", gson.toJson(mission))
             .putInt("num", sharedPreference.getInt("num", -1) + 1).apply()
     }
 
+    /** This function updates the list */
     fun reWriteList(list: SnapshotStateList<Mission>) {
         val gson = Gson()
         val newSize = list.size
