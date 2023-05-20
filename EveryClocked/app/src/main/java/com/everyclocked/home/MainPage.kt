@@ -125,10 +125,9 @@ fun MainPage(
         }
 
         // Timer Function
-        var Hours by Delegates.notNull<Int>()
-        var Minutes by Delegates.notNull<Int>()
-        var Seconds by Delegates.notNull<Int>()
-        var totalRemainTime by Delegates.notNull<Int>()
+        var hours by Delegates.notNull<Int>()
+        var minutes by Delegates.notNull<Int>()
+        var seconds by Delegates.notNull<Int>()
         if(isTimerStart.value){
             var trigger by remember { mutableStateOf(curMission.value!!.remainingTime) }
             val elapsed by animateIntAsState(
@@ -148,10 +147,10 @@ fun MainPage(
                 val sec = elapsedInSec % 60
                 Triple(hou, min, sec)
             }
-            Hours = hou
-            Minutes = min
-            Seconds = sec
-            totalRemainTime = hou * 3600 + min * 60 + sec
+            hours = hou
+            minutes = min
+            seconds = sec
+            curMission.value!!.remainingTime = hours * 3600 + minutes * 60 + seconds
         }
 
         // Main Body of the Layout
@@ -213,7 +212,10 @@ fun MainPage(
                         drawArc(
                             color = Color.LightGray,
                             startAngle = -90f,
-                            sweepAngle = 350f, // set progress here
+                            sweepAngle = if(isTimerStart.value) {
+                                curMission.value!!.remainingTime /
+                                        curMission.value!!.totalTime.toFloat() * 360f
+                            } else { 360f }, // set progress here
                             useCenter = false,
                             topLeft = Offset(
                                 (size.width - innerRadius * 2) / 2,
@@ -227,12 +229,12 @@ fun MainPage(
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = if (isTimerStart.value) {
-                        val formattedHrs = String.format("%02d", Hours)
-                        val formattedMnt = String.format("%02d", Minutes)
-                        val formattedSec = String.format("%02d", Seconds)
-                        if (Hours > 0) {
+                        val formattedHrs = String.format("%02d", hours)
+                        val formattedMnt = String.format("%02d", minutes)
+                        val formattedSec = String.format("%02d", seconds)
+                        if (hours > 0) {
                             "$formattedHrs:$formattedMnt:$formattedSec"
-                        } else if(totalRemainTime != 0) {
+                        } else if(curMission.value!!.remainingTime > 0) {
                             "$formattedMnt:$formattedSec"
                         } else {
                             "Time is up."

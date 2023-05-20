@@ -68,7 +68,8 @@ fun NewMissionDialog(
                         showDialog.value = false
                         newMission.value = Mission(
                             newMissionName.value,
-                            newMissionDuration.value.toInt() * 60
+                            newMissionDuration.value.toInt() * 60,
+                            newMissionDuration.value.toInt() * 60,
                         )
                         newMissionName.value = "New Mission"
                         newMissionDuration.value = "25"

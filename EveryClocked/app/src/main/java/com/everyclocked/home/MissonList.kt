@@ -47,7 +47,7 @@ fun SingleMissionLayout(missionList: MutableList<Mission>, missionIndex: Int,
         missionList.map { mutableStateOf(true) }
     }
     val name = mission.missionName
-    val remainingTime = mission.remainingTime
+    val remainingTime = mission.totalTime
     val minutes = remainingTime / 60
     val seconds = remainingTime - minutes * 60
     val coroutineScope = rememberCoroutineScope()
