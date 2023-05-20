@@ -1,5 +1,6 @@
 package com.everyclocked.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -37,6 +39,7 @@ fun ColorSelection(
     showDialog: MutableState<Boolean>,
     clockVM: ClockViewModel
 ) {
+    val nowContext = LocalContext.current
     AlertDialog(
         modifier = Modifier.background(
             color = MaterialTheme.colorScheme.background,
@@ -113,6 +116,12 @@ fun ColorSelection(
                     red.value = 0f
                     green.value = 0f
                     blue.value = 0f
+                    if (clockVM.hasCustomColor()) {
+                        Toast.makeText(
+                            nowContext,
+                            "Restart app to Apply Changes", Toast.LENGTH_SHORT
+                        ).show()
+                    }
                     clockVM.rmCustomColor()
                     showDialog.value = false
                 },
@@ -134,6 +143,12 @@ fun ColorSelection(
                 Button(
                     modifier = Modifier.weight(1f),
                     onClick = {
+                        if (!clockVM.hasCustomColor()) {
+                            Toast.makeText(
+                                nowContext,
+                                "Restart app to Apply Changes", Toast.LENGTH_SHORT
+                            ).show()
+                        }
                         clockVM.setRGB(red.value, green.value, blue.value)
                         showDialog.value = false
                     },
