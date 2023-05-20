@@ -1,7 +1,6 @@
 package com.everyclocked.parts
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -10,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Man2
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -26,7 +24,6 @@ import com.everyclocked.R
 import com.everyclocked.ui.theme.EveryClockedTheme
 import com.everyclocked.utils.EveryClockedDestinations
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDrawer(
     currentRoute: String,

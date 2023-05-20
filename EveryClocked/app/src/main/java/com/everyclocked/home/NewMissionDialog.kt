@@ -1,7 +1,11 @@
 package com.everyclocked.home
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+
+import android.widget.Toast
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -17,11 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.everyclocked.utilclass.Mission
 import java.time.Duration
+import kotlin.coroutines.coroutineContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +37,7 @@ fun NewMissionDialog(
     showDialog: MutableState<Boolean>,
     newMission: MutableState<Mission?>
 ) {
+    val nowContext = LocalContext.current
     AlertDialog(
         modifier = Modifier.background(
             color = MaterialTheme.colorScheme.background,
@@ -76,13 +83,23 @@ fun NewMissionDialog(
                 }
                 Button(
                     onClick = {
-                        showDialog.value = false
-                        newMission.value = Mission(
-                            newMissionName.value,
-                            newMissionDuration.value.toInt() * 60
-                        )
-                        newMissionName.value = "New Mission"
-                        newMissionDuration.value = "25"
+                        if (newMissionName.value != "" && newMissionDuration.value != ""){
+                            showDialog.value = false
+                            newMission.value = Mission(
+                                newMissionName.value,
+                                newMissionDuration.value.toInt() * 60,
+                                newMissionDuration.value.toInt() * 60,
+                            )
+                            newMissionName.value = "New Mission"
+                            newMissionDuration.value = "25"
+                        }
+                        else{
+                            showDialog.value = false
+                            newMissionName.value = "New Mission"
+                            newMissionDuration.value = "25"
+                            Toast.makeText(nowContext, "Illegal input, please re-enter."
+                                , Toast.LENGTH_SHORT).show()
+                        }
                     }
                 ) {
                     Text("Confirm")
