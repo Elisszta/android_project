@@ -38,7 +38,9 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
         if (!sharedPreference.contains("num")) {
             sharedPreference.edit().putInt("num", 0).apply()
         }
-
+        if (!sharedPreference.contains("curNum")) {
+            sharedPreference.edit().putInt("curNum", -1).apply()
+        }
     }
 
     /** This function sets the color for the clock on the Main page */
@@ -93,7 +95,16 @@ class ClockViewModel(application: Application): AndroidViewModel(application) {
     }
 
     /** This function indicates the mission that is now working **/
-    fun setNowMission(mission: Mission) {
-        nowMission.value = mission
+    fun setNowMission(index: Int) {
+        sharedPreference.edit().putInt("curNum", index).apply()
+    }
+
+    /** This function returns the index of the selected mission */
+    fun getNowMission(): Int? {
+        return if (sharedPreference.getInt("curNum", -1) > 0) {
+            sharedPreference.getInt("curNum", -1)
+        } else {
+            null
+        }
     }
 }

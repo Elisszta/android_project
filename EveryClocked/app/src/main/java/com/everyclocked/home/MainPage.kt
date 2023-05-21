@@ -6,7 +6,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -35,27 +35,21 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -98,9 +92,14 @@ fun MainPage(
         val missionList = remember {
             mutableStateListOf<Mission>()
         }
+        val isReadComplete = remember {
+            mutableStateOf(false)
+        }
         // Read in mission list when application is launched
-        LaunchedEffect(key1 = false)
-        { clockVM.readMissionList(missionList) }
+        LaunchedEffect(key1 = false) {
+            clockVM.readMissionList(missionList)
+            isReadComplete.value = true
+        }
         val displayMsg = remember {
             mutableStateOf("Clock up")
         }
@@ -122,12 +121,19 @@ fun MainPage(
         val newMissionCreate = remember {
             mutableStateOf(false)
         }
-        var isTimerStart = remember {
+        val isTimerStart = remember {
             mutableStateOf(false)
         }
 
         // Set mission working now
-        curMission.value = clockVM.nowMission.value
+        LaunchedEffect(key1 = missionList.size){
+            if (isReadComplete.value &&
+                clockVM.getNowMission() != null &&
+                clockVM.getNowMission()!! > 0 && clockVM.getNowMission()!! <= missionList.size
+            ) {
+                curMission.value = missionList[clockVM.getNowMission()!! - 1]
+            }
+        }
 
         // some side effect
         if (newMissionCreate.value) {
@@ -149,12 +155,16 @@ fun MainPage(
             }
         }
         if (missionRemoved.value) {
+            clockVM.setNowMission(-1)
             missionRemoved.value = false
             changeDisplay(display = displayMsg, curMission = curMission)
             clockVM.reWriteList(missionList)
         }
         LaunchedEffect(missionRemoved.value) {
             missionList.removeIf { it.isHidden }
+        }
+        if (curMission.value != null && curMission.value!!.isHidden){
+            curMission.value = null
         }
 
         // Timer Function
@@ -184,6 +194,9 @@ fun MainPage(
             minutes = min
             seconds = sec
             curMission.value!!.remainingTime = hours * 3600 + minutes * 60 + seconds
+        }
+        if (!isTimerStart.value && isReadComplete.value) {
+            clockVM.reWriteList(missionList)
         }
 
         // Main Body of the Layout
@@ -228,10 +241,16 @@ fun MainPage(
                         .padding(it)
                 ) {
                     Button(
-                        onClick = { if (curMission.value == null) {
-                            Toast.makeText(nowContext, "Please select a mission",
-                                Toast.LENGTH_SHORT).show()
-                        }  else { isTimerStart.value = !isTimerStart.value } },
+                        onClick = {
+                            if (curMission.value == null) {
+                                Toast.makeText(
+                                    nowContext, "Please select a mission",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                isTimerStart.value = !isTimerStart.value
+                            }
+                        },
                         modifier = Modifier
                             .size(buttonSize)
                             .clip(CircleShape),
@@ -253,16 +272,16 @@ fun MainPage(
                         drawArc(
                             color = Color.LightGray,
                             startAngle = -90f,
-                            sweepAngle = if ( isTimerStart.value && curMission.value != null ) {
+                            sweepAngle = if (isTimerStart.value && curMission.value != null) {
                                 curMission.value!!.remainingTime /
                                         curMission.value!!.totalTime.toFloat() * 360f
                             } else if (
                                 curMission.value != null &&
-                                curMission.value!!.remainingTime != curMission.value!!.totalTime) {
+                                curMission.value!!.remainingTime != curMission.value!!.totalTime
+                            ) {
                                 curMission.value!!.remainingTime /
                                         curMission.value!!.totalTime.toFloat() * 360f
-                            }
-                            else {
+                            } else {
                                 360f
                             }, // When pause, remember the progress status
                             useCenter = false,
@@ -293,8 +312,10 @@ fun MainPage(
                         val formattedHrs =
                             String.format("%02d", curMission.value!!.remainingTime / 3600)
                         val formattedMnt =
-                            String.format("%02d", curMission.value!!.remainingTime / 60 -
-                                    curMission.value!!.remainingTime / 3600 * 60)
+                            String.format(
+                                "%02d", curMission.value!!.remainingTime / 60 -
+                                        curMission.value!!.remainingTime / 3600 * 60
+                            )
                         val formattedSec =
                             String.format("%02d", curMission.value!!.remainingTime % 60)
                         if (curMission.value!!.remainingTime / 3600 > 0) {
@@ -316,15 +337,16 @@ fun MainPage(
                     modifier = Modifier
                         .weight(45f),
                 ) {
-                    itemsIndexed(missionList) { index, item ->
+                    itemsIndexed(missionList) { index, _ ->
                         if (!missionList[index].isHidden) {
                             SingleMissionLayout(
-                                missionList,
-                                index,
-                                curMission,
-                                windowWidth,
-                                missionRemoved,
-                                clockVM
+                                missionList = missionList,
+                                missionIndex = index,
+                                curMission = curMission,
+                                width = windowWidth,
+                                curMissionChanged = missionRemoved,
+                                viewModel = clockVM,
+                                isTimerRunning = isTimerStart
                             )
                         }
                     }
